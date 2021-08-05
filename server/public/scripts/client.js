@@ -56,10 +56,13 @@ function renderBooks(books) {
     let book = books[i];
     // For each book, append a new row to our table
     $('#bookShelf').append(`
-      <tr>
+      <tr data-id=${[i].id}>
         <td>${book.title}</td>
         <td>${book.author}</td>
+        <td><button class="isReadBtn">YES</button>
+        <td>${book.isRead}</td>
         <td><button class="deleteBtn">X</button>
+
       </tr>
     `);
   }
@@ -72,6 +75,24 @@ function removeBook(){
     url: `/books/${bookId}`
   }).then(function(res){
     console.log('THE DANG BOOK IS GONE!');
-    refreshBooks();
-  })
+    refreshBooks(response);
+  }).catch(function(error){
+    console.log('CATASTROPHE!', error);
+  });
+}
+
+function markAsRead(){
+  
+  let bookId = $(this).closest('tr').data('id');
+  isRead = $(this).closest('tr').data('is-read');
+
+$.ajax({
+  type: 'PUT',
+  url: `/books/${bookId}`,
+  data: {isRead: true}
+}).then(function(response){
+refreshBooks(response);
+}).catch(function(error){
+  console.log('CATASTROPHE!');
+})
 }
